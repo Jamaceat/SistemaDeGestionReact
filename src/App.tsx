@@ -2,9 +2,9 @@ import React from "react"
 import {Box, SxProps} from "@mui/material"
 import {AnimatePresence, motion} from "framer-motion"
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
-import HeaderGlo from "./Components/Header/Header"
 import Login from "./Components/Login/Login"
 import {ContextProvider} from "./Components/Context/ContextProvider"
+import Administration from "./Components/Administration/Administration"
 
 interface generalStyles {
 	container: SxProps
@@ -33,7 +33,7 @@ function App() {
 						>
 							<Routes>
 								<Route path="/" element={<Login />} />
-								<Route path="/header" element={<HeaderGlo />} />
+								<Route path="/admin" element={<Administration />} />
 							</Routes>
 						</Box>
 					</AnimatePresence>

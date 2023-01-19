@@ -2,6 +2,8 @@ import React, {createContext} from "react"
 import admin from "./default"
 import UserI from "../../../Interfaces/User"
 import openSesion from "./OpenSesion"
+import closeSesion from "./CloseSesion"
+import ValidateSesion from "./ValidateSesion"
 
 export const DataContext = createContext<any>({})
 
@@ -17,7 +19,9 @@ export function ContextProvider({children}: any) {
 	}
 
 	return (
-		<DataContext.Provider value={{verify, openSesion}}>
+		<DataContext.Provider
+			value={{verify, openSesion, closeSesion, ValidateSesion}}
+		>
 			{children}
 		</DataContext.Provider>
 	)

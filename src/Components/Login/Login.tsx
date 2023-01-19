@@ -6,10 +6,9 @@ import {
 	Grid,
 	FormControl,
 	Button,
-	Snackbar,
 } from "@mui/material"
 
-import React, {MouseEvent, useRef, useState, useContext} from "react"
+import React, {MouseEvent, useRef, useState, useContext, useEffect} from "react"
 import {DataContext} from "../Context/ContextProvider"
 import Incorrect from "./Incorrect"
 import Warning from "./Warning"
@@ -46,7 +45,7 @@ const style: loginStyle = {
 	},
 }
 export default function Login() {
-	const {verify, openSesion} = useContext(DataContext)
+	const {verify, openSesion, ValidateSesion} = useContext(DataContext)
 
 	const refForm = useRef() as React.MutableRefObject<HTMLDivElement>
 
@@ -54,6 +53,14 @@ export default function Login() {
 	const [noError_2, setNoError_2] = useState(true)
 	const [openWarning, setOpenWarning] = useState(false)
 	const [openIncorrect, setOpenIncorrect] = useState(false)
+
+	useEffect(() => {
+		if (ValidateSesion()) {
+			setTimeout(() => {
+				window.location.assign("/admin")
+			}, 1000)
+		}
+	}, [])
 
 	const handleClick = (evt: MouseEvent<HTMLButtonElement>) => {
 		evt.preventDefault()
