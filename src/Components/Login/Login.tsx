@@ -60,6 +60,7 @@ export default function Login() {
 				window.location.assign("/admin")
 			}, 1000)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	const handleClick = (evt: MouseEvent<HTMLButtonElement>) => {
@@ -158,7 +159,7 @@ export default function Login() {
 				</Grid>
 			</Grid>
 			<Warning openWarning={openWarning} />
-			<Incorrect openIncorrect={openIncorrect} />
+			<Incorrect openIncorrect={openIncorrect} inputRef={refForm} />
 		</Box>
 	)
 }
