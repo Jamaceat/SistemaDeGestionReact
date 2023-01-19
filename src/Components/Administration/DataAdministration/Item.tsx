@@ -1,5 +1,7 @@
 import React from "react"
 
-function ItemInventario() {}
+function ItemInventario() {
+	return <></>
+}
 
 export default ItemInventario
