@@ -6,9 +6,13 @@ import {
 	Grid,
 	FormControl,
 	Button,
+	Snackbar,
 } from "@mui/material"
 
-import React, {MouseEvent, useRef} from "react"
+import React, {MouseEvent, useRef, useState, useContext} from "react"
+import {DataContext} from "../Context/ContextProvider"
+import Incorrect from "./Incorrect"
+import Warning from "./Warning"
 
 interface loginStyle {
 	container: SxProps
@@ -42,13 +46,55 @@ const style: loginStyle = {
 	},
 }
 export default function Login() {
+	const {verify, openSesion} = useContext(DataContext)
+
 	const refForm = useRef() as React.MutableRefObject<HTMLDivElement>
+
+	const [noError_1, setNoError_1] = useState(true)
+	const [noError_2, setNoError_2] = useState(true)
+	const [openWarning, setOpenWarning] = useState(false)
+	const [openIncorrect, setOpenIncorrect] = useState(false)
+
 	const handleClick = (evt: MouseEvent<HTMLButtonElement>) => {
 		evt.preventDefault()
+
+		if (noError_1 && noError_2) {
+			const inputData = Array.from(
+				refForm?.current.querySelectorAll("input")
+			).map((x) => x.value)
+
+			if (inputData[0] === "" || inputData[1] === "") {
+				handleWarning()
+			} else {
+				verify({username: inputData[0], password: inputData[1]})
+					? openSesion({username: inputData[0], password: inputData[1]})
+					: incorrect()
+			}
+		} else {
+			handleWarning()
+		}
+	}
+
+	const incorrect = () => {
+		setOpenIncorrect((prev) => true)
+		setTimeout(() => {
+			setOpenIncorrect((prev) => false)
+		}, 5000)
+	}
+
+	const handleWarning = () => {
+		setOpenWarning((prev) => true)
+		setTimeout(() => {
+			setOpenWarning((prev) => false)
+		}, 5000)
+	}
+
+	const isEmpty = (): [boolean, boolean] => {
 		const inputData = Array.from(
 			refForm?.current.querySelectorAll("input")
 		).map((x) => x.value)
-		console.log(inputData)
+
+		return [inputData[0] !== "", inputData[1] !== ""]
 	}
 
 	return (
@@ -66,13 +112,46 @@ export default function Login() {
 					xs={12}
 					ref={refForm}
 				>
-					<TextField required fullWidth label={"Username"} />
-					<TextField required fullWidth label={"Password"} type={"password"} />
+					<TextField
+						error={!noError_1}
+						onBlur={() => {
+							const empty = isEmpty()
+							empty[0]
+								? setNoError_1((prev) => true)
+								: setNoError_1((prev) => false)
+						}}
+						helperText={!noError_1 ? "Este campo es obligatorio" : ""}
+						onFocus={() => {
+							setNoError_1((prev) => true)
+						}}
+						required
+						fullWidth
+						label={"Username"}
+					/>
+					<TextField
+						error={!noError_2}
+						onBlur={() => {
+							const empty = isEmpty()
+							empty[1]
+								? setNoError_2((prev) => true)
+								: setNoError_2((prev) => false)
+						}}
+						onFocus={() => {
+							setNoError_2((prev) => true)
+						}}
+						helperText={!noError_2 ? "Este campo es obligatorio" : ""}
+						required
+						fullWidth
+						label={"Password"}
+						type={"password"}
+					/>
 					<Button onClick={handleClick} variant="contained">
 						Login
 					</Button>
 				</Grid>
 			</Grid>
+			<Warning openWarning={openWarning} />
+			<Incorrect openIncorrect={openIncorrect} />
 		</Box>
 	)
 }
