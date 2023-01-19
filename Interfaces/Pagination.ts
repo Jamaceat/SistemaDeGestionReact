@@ -1,13 +1,13 @@
 import singleItem from "./SingleItem"
 
-interface Pagination {
+interface PaginationI {
 	items: singleItem[]
 	page: number
 	size: number
 	total: number
 	pages: number
-	next_page: number
-	previous_page: number
+	next_page: number | null
+	previous_page: number | null
 }
 
-export default Pagination
+export default PaginationI
