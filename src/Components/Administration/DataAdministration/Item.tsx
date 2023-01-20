@@ -1,13 +1,17 @@
 import {Button, Grid, Paper, SxProps, Typography} from "@mui/material"
 import React, {useState} from "react"
 import singleItem from "../../../../Interfaces/SingleItem"
-import ItemBasicStructure from "../../../../Interfaces/Creation"
 import ShowInfoModal from "./ShowInfoModal"
 
 interface itemStyle {
 	container: SxProps
 	buttonsContainer: SxProps
 	textContainer: SxProps
+}
+
+interface Props extends singleItem {
+	id: number
+	setNeedUpdate: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const style: itemStyle = {
@@ -33,26 +37,11 @@ const style: itemStyle = {
 	},
 }
 
-function ItemInventario(props: singleItem) {
+function ItemInventario(props: Props) {
 	const [openInfo, setOpenInfo] = useState<boolean>(false)
+	const [willEdit, setWillEdit] = useState<boolean>(false)
 
-	const {
-		id,
-		// condition,
-		// connection_type,
-		// created_at,
-		// i_b,
-		// i_max,
-		// i_n,
-		// location,
-		// manufacturer,
-		// owner,
-		// purchase,
-		// seals,
-		// serial,
-		// storage_system,
-		// updated_at,
-	} = props
+	const {id} = props
 
 	const handleOpen = () => setOpenInfo((prev) => true)
 
@@ -71,10 +60,18 @@ function ItemInventario(props: singleItem) {
 				Item ID {id}
 			</Grid>
 			<Grid item sx={{...style.buttonsContainer}}>
-				<Button>Edit</Button>
+				<Button
+					onClick={() => {
+						setWillEdit((prev) => true)
+					}}
+				>
+					Edit
+				</Button>
 				<Button color="error">Delete</Button>
 			</Grid>
 			<ShowInfoModal
+				setWillEdit={setWillEdit}
+				willEdit={willEdit}
 				openInfo={openInfo}
 				setOpenInfo={setOpenInfo}
 				item={props}

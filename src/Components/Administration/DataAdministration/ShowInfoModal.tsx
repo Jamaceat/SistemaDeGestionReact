@@ -7,12 +7,15 @@ import {
 	NativeSelect,
 } from "@mui/material"
 import {Box, SxProps} from "@mui/system"
+import axios from "axios"
 import React, {useEffect, useRef, useState} from "react"
 import SingleItem from "../../../../Interfaces/SingleItem"
 
 interface Props {
 	openInfo: boolean
+	willEdit: boolean
 	setOpenInfo: React.Dispatch<React.SetStateAction<boolean>>
+	setWillEdit: React.Dispatch<React.SetStateAction<boolean>>
 	item: SingleItem
 }
 
@@ -20,6 +23,7 @@ interface modalInfoStyles {
 	container: SxProps
 	typography: SxProps
 	infoStyle: SxProps
+	subModalStyle: SxProps
 }
 
 const style: modalInfoStyles = {
@@ -46,14 +50,32 @@ const style: modalInfoStyles = {
 		borderRadius: "1rem",
 		overflow: "hidden",
 	},
+	subModalStyle: {
+		position: "absolute",
+		top: "50%",
+		left: "50%",
+		transform: "translate(-50%, -50%)",
+		width: "80%",
+		bgcolor: "white",
+		border: "2px solid #000",
+		boxShadow: 24,
+		p: 4,
+		display: "flex",
+		flexDirection: "column",
+		height: "30%",
+		gap: "1rem",
+		overflow: "hidden",
+		justifyContent: "space-between",
+	},
 }
 
 function ShowInfoModal(props: Props) {
-	const {openInfo, setOpenInfo} = props
+	const {openInfo, setOpenInfo, willEdit, setWillEdit} = props
 	const inputRef = useRef() as React.MutableRefObject<HTMLDivElement>
 	const [edit, setEdit] = useState<boolean>(false)
 	const [sure, setSure] = useState<boolean>(false)
 	const [item, setItem] = useState<SingleItem>(props.item)
+	const [fetch, setFetch] = useState<boolean>(false)
 
 	const {
 		id,
@@ -75,14 +97,92 @@ function ShowInfoModal(props: Props) {
 
 	const handleClose = () => {
 		setOpenInfo((prev) => false)
-		handleSwitchEdit()
+		handleCloseEdit()
+		if (willEdit === true) {
+			setWillEdit((prev) => false)
+		}
 	}
 	const handleSwitchSure = () => setSure((prev) => !prev)
 	const handleSwitchEdit = () => setEdit((prev) => !prev)
+	const handleSubmit = () => {
+		setFetch((prev) => true)
+		getDataForm()
+		handleSwitchSure()
+	}
+	const handleCloseEdit = () => {
+		setEdit((prev) => false)
+	}
+
+	const handleOpenEdit = () => {
+		setEdit((prev) => true)
+	}
+
 	const formatDate = (date: string): string => {
 		const transforming = new Date(date)
 		const formater = transforming.toJSON()?.split("T")[0]
 		return formater
+	}
+
+	const submitFormat = (date: string): string => {
+		const toFormat = new Date(date)
+		const formated = toFormat.toJSON()
+		return formated
+	}
+
+	const getDataForm = () => {
+		const info = Array.from(
+			inputRef.current.querySelectorAll("input, select")
+		).map((x: any) => {
+			const compareName: string = x.name
+			if (compareName === "purchase") {
+				return {[x.name]: submitFormat(x.value)}
+			} else if (
+				["i_max", "i_b", "i_n", "seals"].some((x) => x === compareName)
+			) {
+				return {[x.name]: +x.value}
+			} else {
+				return {[x.name]: x.value}
+			}
+		})
+
+		const reducer = info.reduce((prev, actual) => {
+			return {...prev, ...actual}
+		}, {})
+
+		setItem((prev) => {
+			return {...prev, ...reducer}
+		})
+	}
+
+	useEffect(() => {
+		if (willEdit === true) {
+			handleOpenEdit()
+			setOpenInfo((prev) => true)
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [willEdit])
+
+	useEffect(() => {
+		if (fetch) {
+			fetchItem()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [item])
+
+	const fetchItem = async () => {
+		try {
+			const {id, created_at, updated_at, ...creationObject} = item
+			const {status} = await axios.patch(
+				`https://ops.enerbit.dev/learning/api/v1/meters/${id}`,
+				creationObject
+			)
+			if (status === 200) {
+				handleSwitchEdit()
+			}
+		} catch (e) {
+			console.log(e, "error")
+		}
 	}
 
 	return (
@@ -178,16 +278,6 @@ function ShowInfoModal(props: Props) {
 				</FormControl>
 
 				<FormControl>
-					<Typography sx={{...style.typography}}>Location</Typography>
-
-					{edit ? (
-						<TextField name="location" defaultValue={location} />
-					) : (
-						<Typography sx={{...style.infoStyle}}>{location}</Typography>
-					)}
-				</FormControl>
-
-				<FormControl>
 					<Typography sx={{...style.typography}}>Manufacturer</Typography>
 
 					{edit ? (
@@ -253,10 +343,21 @@ function ShowInfoModal(props: Props) {
 				</FormControl>
 
 				{!edit ? (
-					<Box>
-						<Button onClick={handleSwitchEdit}>Edit</Button>
-						<Button color="error" variant="contained">
-							Delete
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}
+					>
+						<Box>
+							<Button onClick={handleSwitchEdit}>Edit</Button>
+							<Button color="error" variant="contained">
+								Delete
+							</Button>
+						</Box>
+						<Button color="error" variant="outlined" onClick={handleClose}>
+							Close
 						</Button>
 					</Box>
 				) : (
@@ -268,11 +369,26 @@ function ShowInfoModal(props: Props) {
 					</Box>
 				)}
 
-				<Modal hideBackdrop open={sure} onClose={handleSwitchSure}>
-					<Box sx={{...style.container, width: "20vw"}}>
-						<Typography>Sirvio</Typography>
+				<Modal
+					hideBackdrop
+					open={sure}
+					sx={{height: "auto"}}
+					onClose={handleSwitchSure}
+				>
+					<Box sx={{...style.subModalStyle, width: "20vw"}}>
+						<Typography
+							sx={{
+								fontFamily: "Tauri, sans-serif",
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								height: "80%",
+							}}
+						>
+							Seguro que desea hacer los cambios?
+						</Typography>
 						<Box>
-							<Button>Save</Button>
+							<Button onClick={handleSubmit}>Save</Button>
 							<Button color="error" onClick={handleSwitchSure}>
 								Cancel
 							</Button>

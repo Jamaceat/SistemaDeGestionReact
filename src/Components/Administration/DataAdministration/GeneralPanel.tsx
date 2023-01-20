@@ -66,6 +66,7 @@ function Panel() {
 	const [count, setCount] = useState<number>(1)
 	const [lookUp, setlookUp] = useState<string>("")
 	const [noInformation, setNoInformation] = useState<boolean>(false)
+	const [needUpdate, setneedUpdate] = useState<boolean>(true)
 
 	const fetchingData = async () => {
 		try {
@@ -95,7 +96,7 @@ function Panel() {
 		console.log("looking up", lookUp)
 		fetchingData()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [page, lookUp])
+	}, [page, lookUp, needUpdate])
 
 	// state para la paginación
 	const handleChange = (evt: React.ChangeEvent<unknown>, value: number) => {
@@ -151,7 +152,11 @@ function Panel() {
 					) : (
 						<>
 							{pages.items.map((x) => (
-								<ItemInventario key={x.id} {...x} />
+								<ItemInventario
+									key={x.id}
+									{...x}
+									setNeedUpdate={setneedUpdate}
+								/>
 							))}
 						</>
 					)}
