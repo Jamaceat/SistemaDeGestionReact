@@ -38,9 +38,9 @@ El proceso de instalación requiere de acceder al gestor de paquetes npm actuali
 
 El paso inicial es ingresar a la terminal de comando bash, posteriormente escribir los siguientes comandos
 
-1.         npm i
+1.       npm i
 
-2.         npm start
+2.       npm start
 
 ## **Usos**
 
@@ -114,5 +114,7 @@ Los objetos recuperados de la api tienen la siguiente estructura `JSON` :
     i_n: number
     seals: number
     }
+
+---
 
 [Volver al inicio](#índice)
