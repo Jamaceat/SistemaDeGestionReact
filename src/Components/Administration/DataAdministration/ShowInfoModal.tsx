@@ -193,10 +193,14 @@ function ShowInfoModal(props: Props) {
 	const fetchItem = async () => {
 		try {
 			const {id, created_at, updated_at, ...creationObject} = item
-			const {status} = await axios.patch(
+			const {status, data} = await axios.patch(
 				`https://ops.enerbit.dev/learning/api/v1/meters/${id}`,
 				creationObject
 			)
+			setFetch((prev) => false)
+			setItem((prev) => {
+				return {...prev, updated_at: data.updated_at}
+			})
 			if (status === 200) {
 				handleSwitchEdit()
 			}

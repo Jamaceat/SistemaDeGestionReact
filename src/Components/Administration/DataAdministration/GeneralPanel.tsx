@@ -83,7 +83,6 @@ function Panel() {
 				}&size=10${lookUp !== "" ? `&serial=${lookUp}` : ""}`
 			)
 			let info: PaginationI = data.data
-			console.log("fetching hecho")
 			setPagination((prev) => info)
 			setCount((prev) => info.pages)
 		} catch (e) {
@@ -105,14 +104,9 @@ function Panel() {
 
 	// Recuperacion de datos en la base de datos
 	useEffect(() => {
-		console.log("looking up", lookUp)
 		fetchingData()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [page, lookUp, needUpdate])
-
-	useEffect(() => {
-		console.log("actualizate porfavor", needUpdate)
-	}, [needUpdate])
 
 	// state para la paginación
 	const handleChange = (evt: React.ChangeEvent<unknown>, value: number) => {
