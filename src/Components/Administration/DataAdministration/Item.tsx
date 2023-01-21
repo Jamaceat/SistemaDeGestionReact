@@ -1,6 +1,7 @@
 import {Button, Grid, Paper, SxProps, Typography} from "@mui/material"
 import React, {useState} from "react"
 import singleItem from "../../../../Interfaces/SingleItem"
+import DeleteModal from "./DeleteModal"
 import ShowInfoModal from "./ShowInfoModal"
 
 interface itemStyle {
@@ -10,8 +11,7 @@ interface itemStyle {
 }
 
 interface Props extends singleItem {
-	id: number
-	setNeedUpdate: React.Dispatch<React.SetStateAction<boolean>>
+	handleUpdate: () => void
 }
 
 const style: itemStyle = {
@@ -40,10 +40,22 @@ const style: itemStyle = {
 function ItemInventario(props: Props) {
 	const [openInfo, setOpenInfo] = useState<boolean>(false)
 	const [willEdit, setWillEdit] = useState<boolean>(false)
+	const [willDelete, setWillDelete] = useState<boolean>(false)
+	// Probado willDelete
+	// useEffect(() => {
+	// 	console.log("top level is updating willDelete", willDelete)
+	// }, [willDelete])
 
-	const {id} = props
+	const {id, handleUpdate} = props
+
+	// const handleEditTrue = () => setWillEdit((prev) => true)
+	const handleEditFalse = () => setWillEdit((prev) => false)
 
 	const handleOpen = () => setOpenInfo((prev) => true)
+	const handleClose = () => setOpenInfo((prev) => false)
+
+	const handleDeleteFalse = () => setWillDelete((prev) => false)
+	const handleDeleteTrue = () => setWillDelete((prev) => true)
 
 	return (
 		<Grid container sx={{...style.container}} component={Paper} elevation={4}>
@@ -67,14 +79,29 @@ function ItemInventario(props: Props) {
 				>
 					Edit
 				</Button>
-				<Button color="error">Delete</Button>
+				<Button color="error" onClick={handleDeleteTrue}>
+					Delete
+				</Button>
 			</Grid>
 			<ShowInfoModal
-				setWillEdit={setWillEdit}
 				willEdit={willEdit}
 				openInfo={openInfo}
-				setOpenInfo={setOpenInfo}
+				// setWillEditTrue={handleEditTrue}
+				setWillEditFalse={handleEditFalse}
+				setOpenInfoTrue={handleOpen}
+				setOpenInfoFalse={handleClose}
 				item={props}
+				// setNeedUpdate={setNeedUpdate}
+				willDelete={willDelete}
+				setWillDeleteTrue={handleDeleteTrue}
+				setWillDeleteFalse={handleDeleteFalse}
+				setNeedUpdate={handleUpdate}
+			/>
+			<DeleteModal
+				setNeedUpdate={handleUpdate}
+				id={id}
+				willDelete={willDelete}
+				setWillDeleteFalse={handleDeleteFalse}
 			/>
 		</Grid>
 	)

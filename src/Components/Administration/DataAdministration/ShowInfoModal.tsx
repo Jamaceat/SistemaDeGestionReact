@@ -10,13 +10,20 @@ import {Box, SxProps} from "@mui/system"
 import axios from "axios"
 import React, {useEffect, useRef, useState} from "react"
 import SingleItem from "../../../../Interfaces/SingleItem"
+import DeleteModal from "./DeleteModal"
 
 interface Props {
 	openInfo: boolean
 	willEdit: boolean
-	setOpenInfo: React.Dispatch<React.SetStateAction<boolean>>
-	setWillEdit: React.Dispatch<React.SetStateAction<boolean>>
+	setOpenInfoTrue: () => void
+	setOpenInfoFalse: () => void
+	setWillEditFalse: () => void
 	item: SingleItem
+	// Props for delete
+	willDelete: boolean
+	setWillDeleteTrue: () => void
+	setWillDeleteFalse: () => void
+	setNeedUpdate: () => void
 }
 
 interface modalInfoStyles {
@@ -70,7 +77,17 @@ const style: modalInfoStyles = {
 }
 
 function ShowInfoModal(props: Props) {
-	const {openInfo, setOpenInfo, willEdit, setWillEdit} = props
+	const {
+		openInfo,
+		setOpenInfoTrue,
+		setOpenInfoFalse,
+		willEdit,
+		setWillEditFalse,
+		willDelete,
+		setWillDeleteTrue,
+		setWillDeleteFalse,
+		setNeedUpdate,
+	} = props
 	const inputRef = useRef() as React.MutableRefObject<HTMLDivElement>
 	const [edit, setEdit] = useState<boolean>(false)
 	const [sure, setSure] = useState<boolean>(false)
@@ -96,12 +113,15 @@ function ShowInfoModal(props: Props) {
 	} = item
 
 	const handleClose = () => {
-		setOpenInfo((prev) => false)
+		setOpenInfoFalse()
 		handleCloseEdit()
 		if (willEdit === true) {
-			setWillEdit((prev) => false)
+			// false
+			setWillEditFalse()
 		}
 	}
+
+	// const handleSwitchEditFalse = () => setEdit((prev) => false)
 	const handleSwitchSure = () => setSure((prev) => !prev)
 	const handleSwitchEdit = () => setEdit((prev) => !prev)
 	const handleSubmit = () => {
@@ -157,7 +177,7 @@ function ShowInfoModal(props: Props) {
 	useEffect(() => {
 		if (willEdit === true) {
 			handleOpenEdit()
-			setOpenInfo((prev) => true)
+			setOpenInfoTrue()
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -352,7 +372,13 @@ function ShowInfoModal(props: Props) {
 					>
 						<Box>
 							<Button onClick={handleSwitchEdit}>Edit</Button>
-							<Button color="error" variant="contained">
+							<Button
+								color="error"
+								variant="contained"
+								onClick={() => {
+									setWillDeleteTrue()
+								}}
+							>
 								Delete
 							</Button>
 						</Box>
@@ -395,6 +421,14 @@ function ShowInfoModal(props: Props) {
 						</Box>
 					</Box>
 				</Modal>
+				<DeleteModal
+					id={id}
+					willDelete={willDelete}
+					// setWillDeleteTrue={setWillDeleteTrue}
+					setWillDeleteFalse={setWillDeleteFalse}
+					setNeedUpdate={setNeedUpdate}
+					setOpenInfoFalse={handleClose}
+				/>
 			</Box>
 		</Modal>
 	)

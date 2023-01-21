@@ -1,10 +1,16 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 
 import {Modal, Typography, Button, Box, SxProps} from "@mui/material"
+import axios from "axios"
 
 interface Props {
 	id: number
-	setEdit?: React.Dispatch<React.SetStateAction<boolean>>
+	willDelete: boolean
+	setWillDeleteFalse: () => void
+
+	setNeedUpdate: () => void
+	setEditFalse?: () => void
+	setOpenInfoFalse?: () => void
 }
 
 interface modalInfoStyles {
@@ -31,11 +37,62 @@ const style: modalInfoStyles = {
 	},
 }
 
-function DeleteModal() {
-	const open = true
+function DeleteModal(props: Props) {
+	const {
+		id,
+		willDelete,
+		setWillDeleteFalse,
+		setEditFalse,
+		setOpenInfoFalse,
+		setNeedUpdate,
+	} = props
+
+	const [deleting, setDeleting] = useState<boolean>(false)
+
+	const handleNo = () => {
+		setWillDeleteFalse()
+		setDeleting((prev) => false)
+	}
+
+	const handleYes = () => {
+		if (setEditFalse !== undefined) {
+			setEditFalse()
+		}
+		if (setOpenInfoFalse !== undefined) {
+			setOpenInfoFalse()
+		}
+		setDeleting((prev) => true)
+	}
+
+	// useEffect(() => {
+	// 	setNeedUpdate((prev) => !prev)
+	// 	console.log("deleting: ", id)
+	// }, [deleting])
+
+	const deleteRequest = async () => {
+		try {
+			const {status} = await axios.delete(
+				`https://ops.enerbit.dev/learning/api/v1/meters/${id}`
+			)
+
+			if (status === 202) {
+				setNeedUpdate()
+			}
+			setWillDeleteFalse()
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	useEffect(() => {
+		if (willDelete) {
+			deleteRequest()
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [deleting])
 
 	return (
-		<Modal hideBackdrop sx={{height: "auto"}} open={open}>
+		<Modal hideBackdrop sx={{height: "auto"}} open={willDelete}>
 			<Box sx={{...style.subModalStyle, width: "20vw"}}>
 				<Typography
 					sx={{
@@ -49,8 +106,10 @@ function DeleteModal() {
 					¿Está seguro de que desea borrar este elemento?
 				</Typography>
 				<Box>
-					<Button>Yes</Button>
-					<Button color="error">No</Button>
+					<Button onClick={handleYes}>Yes</Button>
+					<Button color="error" onClick={handleNo}>
+						No
+					</Button>
 				</Box>
 			</Box>
 		</Modal>
