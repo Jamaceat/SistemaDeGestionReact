@@ -14,6 +14,7 @@ import React, {useEffect, useRef, useState} from "react"
 import axios from "axios"
 import PaginationI from "../../../../Interfaces/Pagination"
 import ItemInventario from "./Item"
+import AddItemModal from "./AddItemModal"
 
 interface panelStyles {
 	container: SxProps
@@ -67,6 +68,9 @@ function Panel() {
 	const [lookUp, setlookUp] = useState<string>("")
 	const [noInformation, setNoInformation] = useState<boolean>(false)
 	const [needUpdate, setNeedUpdate] = useState<boolean>(false)
+	const [create, setCreate] = useState<boolean>(false)
+
+	const handleCreate = (value: boolean) => setCreate((prev) => value)
 
 	const fetchingData = async () => {
 		try {
@@ -124,7 +128,13 @@ function Panel() {
 		<Grid container sx={{...style.container}}>
 			<Grid item component={Box} sx={{...style.subContainer}}>
 				<Box>
-					<Button variant="contained" sx={{...style.AddContainer}}>
+					<Button
+						onClick={() => {
+							handleCreate(true)
+						}}
+						variant="contained"
+						sx={{...style.AddContainer}}
+					>
 						Add Product
 					</Button>
 				</Box>
@@ -178,6 +188,11 @@ function Panel() {
 					/>
 				</Paper>
 			</Grid>
+			<AddItemModal
+				Update={handleUpdate}
+				create={create}
+				handleCreate={handleCreate}
+			/>
 		</Grid>
 	)
 }
