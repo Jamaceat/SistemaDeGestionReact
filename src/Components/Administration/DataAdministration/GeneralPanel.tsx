@@ -89,9 +89,13 @@ function Panel() {
 		} catch (e) {
 			setPagination((prev) => null)
 			setCount((prev) => 0)
-			setTimeout(() => {
-				setNoInformation((prev) => true)
-			}, 1000)
+			if (pages?.previous_page === null) {
+				setTimeout(() => {
+					setNoInformation((prev) => true)
+				}, 1000)
+			} else {
+				setPage((prev) => 1)
+			}
 		}
 	}
 

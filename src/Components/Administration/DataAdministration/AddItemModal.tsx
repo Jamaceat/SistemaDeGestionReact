@@ -103,6 +103,7 @@ function AddItemModal(props: Props) {
 			console.log("es null")
 			handleCreate(false)
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newCreation])
 
 	const handleSubmit = () => {
