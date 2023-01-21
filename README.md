@@ -1,5 +1,15 @@
 # Sistema de gestion | REACT | CRUD | Typescript
 
+## Índice
+
+- [Instalación](#instalación)
+  - [Requisitos](#Requisitos)
+  - [Pasos](#Pasos)
+  - [Usos](#usos)
+  - [Inicio de sesión](#inicio_de_sesión)
+
+---
+
 Este proyecto es un desarrollo de un sistema de gestión de inventarios que se conecta a una `API` publica proporcionada por **_enerBit_**, la aplicación cuenta con dos pantallas principales (Login , Admin) con persistencia de dato en `localStorage` y gestión todos los servicios `CRUD`, además de ser **_responsive_** para el ingreso en varios dispositivos.
 
 La aplicacion esta desplegada en una instancia gratuita de netlify y puede acceder desde [aquí](https://main--fancy-brigadeiros-ed396f.netlify.app/)
@@ -18,9 +28,9 @@ tener el gestor de paquetes npm actualizado como minimo version 9.2.0
 
 Escribir en bash
 
-1.       npm i
+1.               npm i
 
-2.         npm start
+2.               npm start
 
 ## **Usos**
 
